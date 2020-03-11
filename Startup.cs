@@ -42,7 +42,7 @@ namespace ProjectGoodSamaritan
             }
 
             app.UseHttpsRedirection();
-
+            //app.UseCors(options => options.AllowAnyOrigin());
             app.UseRouting();
 
             app.UseAuthorization();
