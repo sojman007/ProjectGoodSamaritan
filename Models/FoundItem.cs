@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProjectGoodSamaritan.Models
 {
     public class FoundItem
     {
-        [Required]
-       //[Key]
-        public int Id { get; set; }
+
+       // [Key]
+        public string Id { get; set; } =  Guid.NewGuid().ToString();
+
         
         [Required]
         [MaxLength(20)]

@@ -10,8 +10,8 @@ using ProjectGoodSamaritan.Data;
 namespace ProjectGoodSamaritan.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200310235039_Initial")]
-    partial class Initial
+    [Migration("20200312180637_Fixidentity")]
+    partial class Fixidentity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,10 +23,8 @@ namespace ProjectGoodSamaritan.Migrations
 
             modelBuilder.Entity("ProjectGoodSamaritan.Models.FoundItem", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("newId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(256)")
@@ -43,17 +41,18 @@ namespace ProjectGoodSamaritan.Migrations
                     b.Property<string>("ItemRecoveryInstructions")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("newId");
+
+                    b.HasIndex("ItemName")
+                        .IsUnique();
 
                     b.ToTable("FoundItems");
                 });
 
             modelBuilder.Entity("ProjectGoodSamaritan.Models.LostItem", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(256)")
@@ -68,6 +67,9 @@ namespace ProjectGoodSamaritan.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ItemName")
+                        .IsUnique();
 
                     b.ToTable("LostItems");
                 });

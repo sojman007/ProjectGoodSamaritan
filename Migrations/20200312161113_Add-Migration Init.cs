@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ProjectGoodSamaritan.Migrations
 {
-    public partial class Initial : Migration
+    public partial class AddMigrationInit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -27,9 +27,9 @@ namespace ProjectGoodSamaritan.Migrations
                 name: "LostItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(nullable: false),
                     ItemName = table.Column<string>(maxLength: 20, nullable: false),
+                    Index = table.Column<int>(nullable: false),
                     Description = table.Column<string>(maxLength: 256, nullable: true),
                     LostDateTime = table.Column<DateTime>(nullable: false)
                 },
@@ -37,6 +37,11 @@ namespace ProjectGoodSamaritan.Migrations
                 {
                     table.PrimaryKey("PK_LostItems", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LostItems_Index",
+                table: "LostItems",
+                column: "Index");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -30,7 +30,7 @@ namespace ProjectGoodSamaritan.Controllers
 
         // GET: api/FoundItems/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<FoundItem>> GetFoundItem(int id)
+        public async Task<ActionResult<FoundItem>> GetFoundItem(string id)
         {
             var foundItem = await _context.FoundItems.FindAsync(id);
 
@@ -46,7 +46,7 @@ namespace ProjectGoodSamaritan.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFoundItem(int id, FoundItem foundItem)
+        public async Task<IActionResult> PutFoundItem(string id, FoundItem foundItem)
         {
             if (id != foundItem.Id)
             {
@@ -77,19 +77,32 @@ namespace ProjectGoodSamaritan.Controllers
         // POST: api/FoundItems
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        
         [HttpPost]
         public async Task<ActionResult<FoundItem>> PostFoundItem(FoundItem foundItem)
         {
             _context.FoundItems.Add(foundItem);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (FoundItemExists(foundItem.Id))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return CreatedAtAction("GetFoundItem", new { id = foundItem.Id }, foundItem);
         }
 
         // DELETE: api/FoundItems/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<FoundItem>> DeleteFoundItem(int id)
+        public async Task<ActionResult<FoundItem>> DeleteFoundItem(string id)
         {
             var foundItem = await _context.FoundItems.FindAsync(id);
             if (foundItem == null)
@@ -103,7 +116,7 @@ namespace ProjectGoodSamaritan.Controllers
             return foundItem;
         }
 
-        private bool FoundItemExists(int id)
+        private bool FoundItemExists(string id)
         {
             return _context.FoundItems.Any(e => e.Id == id);
         }

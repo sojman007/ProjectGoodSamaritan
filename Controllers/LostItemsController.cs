@@ -30,7 +30,7 @@ namespace ProjectGoodSamaritan.Controllers
 
         // GET: api/LostItems/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<LostItem>> GetLostItem(int id)
+        public async Task<ActionResult<LostItem>> GetLostItem(string id)
         {
             var lostItem = await _context.LostItems.FindAsync(id);
 
@@ -46,7 +46,7 @@ namespace ProjectGoodSamaritan.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutLostItem(int id, LostItem lostItem)
+        public async Task<IActionResult> PutLostItem(string id, LostItem lostItem)
         {
             if (id != lostItem.Id)
             {
@@ -81,14 +81,28 @@ namespace ProjectGoodSamaritan.Controllers
         public async Task<ActionResult<LostItem>> PostLostItem(LostItem lostItem)
         {
             _context.LostItems.Add(lostItem);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (LostItemExists(lostItem.Id))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return CreatedAtAction("GetLostItem", new { id = lostItem.Id }, lostItem);
         }
 
         // DELETE: api/LostItems/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<LostItem>> DeleteLostItem(int id)
+        public async Task<ActionResult<LostItem>> DeleteLostItem(string id)
         {
             var lostItem = await _context.LostItems.FindAsync(id);
             if (lostItem == null)
@@ -102,7 +116,7 @@ namespace ProjectGoodSamaritan.Controllers
             return lostItem;
         }
 
-        private bool LostItemExists(int id)
+        private bool LostItemExists(string id)
         {
             return _context.LostItems.Any(e => e.Id == id);
         }

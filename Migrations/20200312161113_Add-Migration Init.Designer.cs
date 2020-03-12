@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectGoodSamaritan.Data;
 
 namespace ProjectGoodSamaritan.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200312161113_Add-Migration Init")]
+    partial class AddMigrationInit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,8 +23,10 @@ namespace ProjectGoodSamaritan.Migrations
 
             modelBuilder.Entity("ProjectGoodSamaritan.Models.FoundItem", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(256)")
@@ -41,9 +45,6 @@ namespace ProjectGoodSamaritan.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ItemName")
-                        .IsUnique();
-
                     b.ToTable("FoundItems");
                 });
 
@@ -56,6 +57,9 @@ namespace ProjectGoodSamaritan.Migrations
                         .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
 
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
+
                     b.Property<string>("ItemName")
                         .IsRequired()
                         .HasColumnType("nvarchar(20)")
@@ -66,8 +70,7 @@ namespace ProjectGoodSamaritan.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ItemName")
-                        .IsUnique();
+                    b.HasIndex("Index");
 
                     b.ToTable("LostItems");
                 });

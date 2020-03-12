@@ -14,7 +14,26 @@ namespace ProjectGoodSamaritan.Data
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options):base(options)
         {
-            Console.WriteLine(options.ToString());
+           
+        }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+
+            modelBuilder.Entity<LostItem>().HasKey(k=> k.Id);
+
+                modelBuilder.Entity<LostItem>()
+                .HasIndex(item => item.ItemName)
+                .IsUnique();
+
+
+            modelBuilder.Entity<FoundItem>().HasKey(k => k.Id);
+            modelBuilder.Entity<FoundItem>()
+                .HasIndex(fItem => fItem.ItemName)
+                .IsUnique();
         }
     }
 }
