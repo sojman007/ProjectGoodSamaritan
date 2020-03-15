@@ -80,6 +80,7 @@ namespace ProjectGoodSamaritan.Controllers
         [HttpPost]
         public async Task<ActionResult<FoundItem>> PostFoundItem(FoundItem foundItem)
         {
+            
             _context.FoundItems.Add(foundItem);
             try
             {

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ProjectGoodSamaritan.Models;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ProjectGoodSamaritan.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext
     {
         public DbSet<FoundItem> FoundItems { get; set; }
         public DbSet<LostItem> LostItems { get; set; }
@@ -22,18 +23,33 @@ namespace ProjectGoodSamaritan.Data
         {
             base.OnModelCreating(modelBuilder);
 
-
-            modelBuilder.Entity<LostItem>().HasKey(k=> k.Id);
-
-                modelBuilder.Entity<LostItem>()
-                .HasIndex(item => item.ItemName)
-                .IsUnique();
+            //configure lost items
+            modelBuilder.Entity<LostItem>()
+                .HasKey(k=> k.Id);
 
 
-            modelBuilder.Entity<FoundItem>().HasKey(k => k.Id);
+            modelBuilder.Entity<LostItem>()
+                .HasIndex(item => item.ItemName);
+
+            modelBuilder.Entity<LostItem>()
+                .HasOne<AppUser>(c => c.User)
+                .WithMany(c => c.LostItems)
+                .HasForeignKey(c => c.AppUserId);
+
+            
+            //configure found items
+            
             modelBuilder.Entity<FoundItem>()
-                .HasIndex(fItem => fItem.ItemName)
-                .IsUnique();
+                .HasOne<AppUser>(c => c.User)
+                .WithMany(c => c.FoundItems)
+                .HasForeignKey(c => c.AppUserId);
+
+
+            modelBuilder.Entity<FoundItem>()
+                .HasKey(k => k.Id);
+
+            modelBuilder.Entity<FoundItem>()
+                .HasIndex(fItem => fItem.ItemName);
         }
     }
 }

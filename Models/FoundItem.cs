@@ -20,6 +20,12 @@ namespace ProjectGoodSamaritan.Models
         [Required]
         public DateTime FoundDateTime { get; set; } = DateTime.Now;
         public string ItemRecoveryInstructions { get; set; }
+        
+        //relationship stuff to User 
+        
+        public string AppUserId { get; set; }
+        public AppUser User { get; set; }
+
 
     }
 }

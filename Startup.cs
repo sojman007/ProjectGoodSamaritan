@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ProjectGoodSamaritan.Data;
+using ProjectGoodSamaritan.Models;
 
 namespace ProjectGoodSamaritan
 {
@@ -30,7 +32,16 @@ namespace ProjectGoodSamaritan
             services.AddControllers();
             //TO-DO: Add Identity later On
             services.AddDbContext<ApplicationDbContext>(options => 
-            options.UseSqlServer("Server=.;Database=PgsDb;Trusted_Connection=True;MultipleActiveResultSets=true;"));
+            options.UseSqlServer(Configuration.GetConnectionString("PgsDb")));
+            
+            services.AddIdentity<AppUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+
+
+
+        
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,9 +53,13 @@ namespace ProjectGoodSamaritan
             }
 
             app.UseHttpsRedirection();
-            //app.UseCors(options => options.AllowAnyOrigin());
+            
+            app.UseCors(options => options.AllowAnyOrigin());
+            
             app.UseRouting();
 
+            
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
