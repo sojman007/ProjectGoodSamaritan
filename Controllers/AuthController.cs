@@ -12,53 +12,46 @@ namespace ProjectGoodSamaritan.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<AppUser> uM;
-        private readonly SignInManager<AppUser> sM;
-        private readonly ApplicationDbContext con;
-        private readonly Validator _val;
+        private readonly PasswordHasher<AppUser> _hasher;
         //Inject Dependencies
-        public AuthController(
-            UserManager<AppUser> uMan,
-            ApplicationDbContext cont,
-            Validator val)
+        public AuthController(UserManager<AppUser> uMan)
         {
             uM = uMan;
-            con = cont;
-            _val = val;
-        }
-        [HttpPost]
-        public async Task<ActionResult> SignIn(SignInModel SignIn)
-        {
+            _hasher = new PasswordHasher<AppUser>();
 
-            //TODO: check Dto model for valid details ,  return Token
-            if (_val.ValidateModel(SignIn) == true)
+        }
+
+        [HttpPost("signin")]
+        public async Task<ActionResult<string>> SignIn(SignInModel SignIn)
+        {
+            //if user exists, generate a token for the new User
+            var existingUser = await uM.FindByEmailAsync(SignIn.Email);
+           
+
+            var validPassWord = _hasher.VerifyHashedPassword(existingUser, existingUser.PasswordHash, SignIn.Password);
+           
+            if(existingUser!= null && validPassWord == PasswordVerificationResult.Success)
             {
-                await Task.Delay(0); 
-                    
-                return Ok();//generate token here and return it 
+                return await TokenGenerator.GenerateToken(SignIn,uM);
             }
             
-            return Unauthorized();
+            return Unauthorized("User does not exist");
 
         }
 
-        [HttpPost]
-        public async Task<ActionResult> Register(RegisterModel Register)
+        
+        [HttpPost("signup")]
+        public async Task<ActionResult> Register(RegisterModel register)
         {
-            var newUser = await uM.CreateAsync(new AppUser {Email = Register.Email , UserName = Register.UserName }, Register.Password);
+
+            var newUser = await uM.CreateAsync(new AppUser {Email = register.Email , UserName = register.UserName }, register.Password);
             return new CreatedResult("AspNetUsers",newUser);
+        
+        
         }
 
 
-        [HttpGet]
-        public async Task<ActionResult> SignOut()
-        {
-            await sM.SignOutAsync();
-            return Ok("signed out");
-        }
-
-
-
-
+    
     }
 
 
